@@ -21,8 +21,12 @@ public class SystemController {
             // 삭제 및 수정
             if (hasQueryParam) {
                 switch (input.substring(0, 2)) {
-                    case "삭제" -> { return DELETE;}
-                    case "수정" -> { return EDIT;}
+                    case "삭제" -> {
+                        if (!queryParams.containsKey("id")) { return NONE;}
+                        return DELETE;}
+                    case "수정" -> {
+                        if (!queryParams.containsKey("id")) { return NONE;}
+                        return EDIT;}
                     case "목록" ->  {
                         if (queryParams.containsKey("keywordType")) { return FILTER;}
                         return VIEW;

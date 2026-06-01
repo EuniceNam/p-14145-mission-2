@@ -41,12 +41,17 @@ public class WiseSayingController {
         }
     }
     private void view(HashMap<String, String> queryParams) {
-        System.out.print(GuideMsg.VIEW.getValue());
         queryParams.putIfAbsent("page", "1");
-        System.out.print(wiseSayingService.readPage(Integer.parseInt(queryParams.get("page"))));
-        System.out.print(GuideMsg.PAGE.getValue());
-        System.out.print(PageStringUtil
-                .getPageList(Integer.parseInt(queryParams.get("page")), wiseSayingService.getPageCount()));
+        String page = wiseSayingService.readPage(Integer.parseInt(queryParams.get("page")));
+        if (page.isEmpty()) {
+            System.out.print(GuideMsg.PAGENOTEXIST.getValue().formatted(Integer.parseInt(queryParams.get("page"))));
+        } else {
+            System.out.print(GuideMsg.VIEW.getValue());
+            System.out.print(page);
+            System.out.print(GuideMsg.PAGE.getValue());
+            System.out.print(PageStringUtil
+                    .getPageList(Integer.parseInt(queryParams.get("page")), wiseSayingService.getPageCount()));
+        }
     }
     private void filter(HashMap<String, String> queryParams) {
         System.out.printf(GuideMsg.FILTER.getValue(), queryParams.get("keywordType"), queryParams.get("keyword"));
@@ -64,9 +69,12 @@ public class WiseSayingController {
     }
     private void edit(Scanner sc, HashMap<String, String> queryParams) {
         int qid = Integer.parseInt(queryParams.get("id"));
-        String[] tmpQ = wiseSayingService.read(qid);
-        if (tmpQ == null) { System.out.printf(GuideMsg.ABSENT.getValue(), qid); return;}
-
+        String[] tmpQ;
+        try {
+            tmpQ = wiseSayingService.read(qid);
+        } catch (Exception e) {
+            System.out.printf(GuideMsg.ABSENT.getValue(), qid); return;
+        }
         System.out.print(GuideMsg.QUOTEOLD.getValue()+tmpQ[0]+"\n"+GuideMsg.QUOTE.getValue());
         String newQuote = sc.nextLine();
         if (newQuote.isEmpty()){ System.out.print(GuideMsg.EMPTY.getValue()); return;}

@@ -1,6 +1,5 @@
 package com.back;
 
-import com.back.domain.wiseSaying.entity.WiseSaying;
 import com.back.standard.util.TestUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -14,7 +13,6 @@ public class AppTestRunner {
         AppContext.renew(scanner);
         new App().run();
 
-        WiseSaying.resetLastQuoteNoForTest();
         return output.toString();
     }
 }

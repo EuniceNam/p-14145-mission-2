@@ -1,6 +1,9 @@
 ### 개인 및 로컬 설정 파일 (제외 대상) ###
 .name
 /docs/요구사항.md
+/docs/Study.md
+/db/wiseSaying/*
+!/db/wiseSaying/.gitkeep
 mcp.json
 
 ### IntelliJ IDEA ###
