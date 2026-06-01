@@ -47,4 +47,8 @@ public class WiseSayingService {
         if (newQuote.isEmpty()) { return;}
         wiseSayingRepository.update(qid, newQuote, newAuthor);
     }
+
+    public void exportData() {
+        wiseSayingRepository.export();
+    }
 }

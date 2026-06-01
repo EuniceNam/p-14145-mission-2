@@ -4,6 +4,7 @@
 /docs/Study.md
 /db/wiseSaying/*
 !/db/wiseSaying/.gitkeep
+/db/export/*
 mcp.json
 
 ### IntelliJ IDEA ###

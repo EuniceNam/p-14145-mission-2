@@ -14,7 +14,7 @@ public class SystemController {
     private final WiseSayingController wiseSayingController;
     private static HashMap<String, String> queryParams = new HashMap<>(); // 다른 방법?
     public enum CmdMsg {
-        NONE, DELETE, EDIT, FILTER, EXIT, REGISTER, VIEW;
+        NONE, DELETE, EDIT, FILTER, EXIT, REGISTER, VIEW, BUILD;
         public static CmdMsg from(String input) {
             // '?'로 시작하는 추가적인 요청이 있는가
             boolean hasQueryParam = parseQuery(input);
@@ -33,11 +33,12 @@ public class SystemController {
                     }
                 }
             }
-            // 종료, 등록, 목록
+            // 종료, 등록, 목록, 빌드
             return switch (input) {
                 case "종료" -> EXIT;
                 case "등록" -> REGISTER;
                 case "목록" -> VIEW;
+                case "빌드" -> BUILD;
                 default -> NONE;
             };
         }
@@ -80,6 +81,7 @@ public class SystemController {
                 case FILTER -> wiseSayingController.execute(FILTER, queryParams);
                 case DELETE -> wiseSayingController.execute(DELETE, queryParams);
                 case EDIT -> wiseSayingController.execute(EDIT, queryParams);
+                case BUILD -> wiseSayingController.execute(BUILD, queryParams);
             }
         }
     }

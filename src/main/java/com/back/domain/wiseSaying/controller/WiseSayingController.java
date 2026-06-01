@@ -24,6 +24,7 @@ public class WiseSayingController {
             case FILTER -> filter(queryParams);
             case DELETE -> delete(queryParams);
             case EDIT -> edit(sc, queryParams);
+            case BUILD -> build();
         }
     }
     private void register(Scanner sc) {
@@ -81,5 +82,13 @@ public class WiseSayingController {
         System.out.print(GuideMsg.AUTHOROLD.getValue()+tmpQ[1]+"\n"+GuideMsg.AUTHOR.getValue());
         String newAuthor = sc.nextLine();
         wiseSayingService.edit(qid, newQuote, newAuthor);
+    }
+    private void build() {
+        try{
+            wiseSayingService.exportData();
+            System.out.print(GuideMsg.BUILDSUCCESS.getValue());
+        } catch (Exception e) {
+            System.out.println(GuideMsg.BUILDFAIL.getValue() + e.getMessage());
+        }
     }
 }

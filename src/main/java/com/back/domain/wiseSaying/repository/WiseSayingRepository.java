@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 public class WiseSayingRepository {
     private final Path DB_DIRECTORY = Path.of("db/wiseSaying");
     private final Path LAST_ID_PATH = DB_DIRECTORY.resolve("lastId.txt");
+    private final Path EXPORT_PATH = DB_DIRECTORY.resolve("../export/data.json"); // 아 이럼 꼬이는데
     private final int PAGE_SIZE = 5;
 
     public WiseSayingRepository() {}
@@ -57,7 +58,7 @@ public class WiseSayingRepository {
         try (Stream<Path> stream = Files.list(DB_DIRECTORY)) {
             return stream
                     .filter(path -> path.getFileName().toString().endsWith(WiseSayingJSONConverter.EXTENSION))
-                    .sorted(FileSortUtil.byFileNameNumber())
+                    .sorted(FileSortUtil.byFileNameNumberDesc())
                     .skip(start)
                     .limit(end - start)
                     .map( path -> {
@@ -98,7 +99,7 @@ public class WiseSayingRepository {
         try (Stream<Path> stream = Files.list(DB_DIRECTORY)) {
             filteredPage = stream
                     .filter(path -> path.toString().endsWith(WiseSayingJSONConverter.EXTENSION))
-                    .sorted(FileSortUtil.byFileNameNumber())
+                    .sorted(FileSortUtil.byFileNameNumberDesc())
                     .map(path -> {
                         try {
                             return WiseSayingJSONConverter.fromJsonString(Files.readString(path));
@@ -159,6 +160,37 @@ public class WiseSayingRepository {
                     .count();
         } catch (IOException e) {
             System.out.println("Exception at countWiseSaying(): " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void export() {
+        String exportString;
+        try (Stream<Path> stream = Files.list(DB_DIRECTORY)) {
+            exportString = stream
+                    .filter(path -> path.getFileName().toString().endsWith(WiseSayingJSONConverter.EXTENSION))
+                    .sorted(FileSortUtil.byFileNameNumberAsc())
+                    .map(path -> {
+                        try {
+                            return Files.readAllLines(path, java.nio.charset.StandardCharsets.UTF_8).stream()
+                                    .map(line -> "\t" + line)
+                                    .collect(Collectors.joining("\n"));
+                        } catch (IOException e) {
+                            System.out.println("Exception at export() map readAllLines: " + e.getMessage());
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .collect(Collectors.joining(",\n", "[\n", "\n]"));
+        } catch (IOException e) {
+            System.out.println("Exception at export() read: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Files.createDirectories(EXPORT_PATH.getParent());
+            Files.writeString(EXPORT_PATH, exportString, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            System.out.println("Exception at export() write: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
